@@ -19,13 +19,21 @@ namespace PRSCapstoneWebPractice {
         }
 
         public IConfiguration Configuration { get; }
+        public readonly string DefaultCorsPolicy = "_defaultCorsPolicy";
+        public string[] AllowOrigins = { "http://localhost:4200" };
+        public string[] AllowMethods = { "GET", "PUT", "POST", "DELETE" };
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllers();
 
-    services.AddDbContext<TestDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("TestDbContext")));
+            services.AddDbContext<TestDbContext>(options => {
+                options.UseLazyLoadingProxies();
+                options.UseSqlServer(Configuration.GetConnectionString("TestDbContext"));
+            });
+            services.AddCors(options =>
+            options.AddPolicy(DefaultCorsPolicy, x => x.WithOrigins(AllowOrigins).WithMethods(AllowMethods).AllowAnyHeader())
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,6 +41,8 @@ namespace PRSCapstoneWebPractice {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(DefaultCorsPolicy);
 
             app.UseRouting();
 

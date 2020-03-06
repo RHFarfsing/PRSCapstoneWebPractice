@@ -15,6 +15,7 @@ namespace PRSCapstoneWebPractice.Data
         }
         protected override void OnModelCreating(ModelBuilder model) {
             model.Entity<User>(e => {
+                e.ToTable("Users");
                 e.HasKey(x => x.Id);
                 e.Property(x => x.Username).HasMaxLength(30).IsRequired();
                 e.Property(x => x.Password).HasMaxLength(30).IsRequired();
@@ -28,6 +29,6 @@ namespace PRSCapstoneWebPractice.Data
             });
         }
 
-        public DbSet<PRSCapstoneWebPractice.Models.User> User { get; set; }
+        public DbSet<User> User { get; set; }
     }
 }
